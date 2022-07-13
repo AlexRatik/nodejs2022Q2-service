@@ -45,7 +45,7 @@ export class UsersService {
 
   remove(id: string) {
     const userIndex = this.users.findIndex((user) => user.id === id);
-    this.users.splice(userIndex, 1);
+    if (userIndex !== -1) this.users.splice(userIndex, 1);
     return userIndex;
   }
 }
