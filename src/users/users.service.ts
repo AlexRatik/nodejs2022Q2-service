@@ -26,8 +26,8 @@ export class UsersService {
       id: uuidv4(),
       login: createUserDto.login,
       password: createUserDto.password,
-      createdAt: Math.floor(Date.now() / 1000),
-      updatedAt: Math.floor(Date.now() / 1000),
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
       version: 1,
     });
     if (user instanceof User) {
@@ -46,7 +46,7 @@ export class UsersService {
     const user = this.users.find((user) => user.id === id);
     if (user && user.password === updatePasswordDTO.oldPassword) {
       user.password = updatePasswordDTO.newPassword;
-      user.updatedAt = Math.floor(Date.now() / 1000) + 1;
+      user.updatedAt = Date.now();
       user.version++;
       console.log(user);
       return user;
