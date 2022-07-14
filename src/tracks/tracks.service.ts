@@ -6,32 +6,25 @@ import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TracksService {
-  private tracks: Track[] = [
-    {
-      id: '660f4386-50b3-4725-8984-d2f9c1e667e5',
-      name: 'dog',
-      albumId: null,
-      artistId: null,
-      duration: 32,
-    },
-  ];
+  private tracks: Track[] = [];
 
   findAll() {
     return this.tracks;
   }
 
   findOne(id: string) {
-    return this.tracks.find((track) => track.id === id);
+    const track = this.tracks.find((track) => track.id === id);
+    return track;
   }
 
   create(createTrackDto: CreateTrackDto) {
-    const track: Track = {
+    const track = new Track({
       id: uuidv4(),
       name: createTrackDto.name,
       albumId: createTrackDto.albumId || null,
       artistId: createTrackDto.artistId || null,
       duration: createTrackDto.duration,
-    };
+    });
     this.tracks.push(track);
     return track;
   }

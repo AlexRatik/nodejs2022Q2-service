@@ -4,11 +4,6 @@ import { TracksController } from './tracks.controller';
 
 @Module({
   controllers: [TracksController],
-  providers: [
-    {
-      provide: 'TRACKS_SERVICE',
-      useClass: TracksService,
-    },
-  ],
+  providers: [TracksService],
 })
 export class TracksModule {}

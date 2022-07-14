@@ -1,5 +1,5 @@
 import {
-  IsNotEmpty,
+  IsNotEmpty, IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
@@ -12,13 +12,13 @@ export class CreateTrackDto {
 
   @IsString()
   @IsOptional()
-  artistId?: string | null;
+  artistId: string | null;
 
   @IsString()
   @IsOptional()
-  albumId?: string | null;
+  albumId: string | null;
 
-  @IsNumberString()
+  @IsNumber()
   @IsNotEmpty()
   duration: number;
 }
