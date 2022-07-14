@@ -1,19 +1,4 @@
-import {IsNumber, IsNumberString, IsOptional, IsString} from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateTrackDto } from './create-track.dto';
 
-export class UpdateTrackDto {
-  @IsString()
-  @IsOptional()
-  name: string;
-
-  @IsString()
-  @IsOptional()
-  artistId: string;
-
-  @IsString()
-  @IsOptional()
-  albumId: string;
-
-  @IsNumber()
-  @IsOptional()
-  duration: number;
-}
+export class UpdateTrackDto extends PartialType(CreateTrackDto) {}

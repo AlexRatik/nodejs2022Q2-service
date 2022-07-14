@@ -33,14 +33,10 @@ export class TracksService {
     const track = this.tracks.find((track) => track.id === id);
     if (track) {
       const keysForUpdate = Object.keys(updateTrackDto);
-      console.log(keysForUpdate);
       for (const key of Object.keys(track)) {
         if (keysForUpdate.includes(key)) {
-          console.log(key);
-
           track[key] = updateTrackDto[key];
         }
-
         continue;
       }
     }
