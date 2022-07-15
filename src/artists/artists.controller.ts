@@ -23,38 +23,41 @@ export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.artistsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string) {
     if (!isValidID(id)) throw new BadRequestException(ERRORS_MSGS.INVALID_ID);
-    const artist = this.artistsService.findOne(id);
+    const artist = await this.artistsService.findOne(id);
     if (artist) return artist;
     else throw new NotFoundException(ERRORS_MSGS.ARTIST_NOT_FOUND);
   }
 
   @Post()
-  create(@Body() createArtistDto: CreateArtistDto) {
-    const artist = this.artistsService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    const artist = await this.artistsService.create(createArtistDto);
     if (artist instanceof Artist) return artist;
     else throw new BadRequestException(ERRORS_MSGS.NO_REQUIRED_FIELDS);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
     if (!isValidID(id)) throw new BadRequestException(ERRORS_MSGS.INVALID_ID);
-    const artist = this.artistsService.update(id, updateArtistDto);
+    const artist = await this.artistsService.update(id, updateArtistDto);
     if (artist) return artist;
     else throw new NotFoundException(ERRORS_MSGS.ARTIST_NOT_FOUND);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     if (!isValidID(id)) throw new BadRequestException(ERRORS_MSGS.INVALID_ID);
-    const artistIndex = this.artistsService.remove(id);
+    const artistIndex = await this.artistsService.remove(id);
     if (artistIndex === -1)
       throw new NotFoundException(ERRORS_MSGS.ARTIST_NOT_FOUND);
     return;

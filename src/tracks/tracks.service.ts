@@ -5,6 +5,8 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
 import { DATABASE } from '../database/database';
+import { ArtistsService } from '../artists/artists.service';
+import { FavoritesService } from '../favorites/favorites.service';
 
 @Injectable()
 export class TracksService {
@@ -12,7 +14,11 @@ export class TracksService {
 
   constructor(
     @Inject(forwardRef(() => AlbumsService))
-    private albumsService: AlbumsService,
+    private readonly albumsService: AlbumsService,
+    @Inject(forwardRef(() => ArtistsService))
+    private readonly artistService: ArtistsService,
+    @Inject(forwardRef(() => FavoritesService))
+    private readonly favoritesService: FavoritesService,
   ) {
     TracksService.DB = new DATABASE<Track>(Track);
   }
@@ -49,19 +55,13 @@ export class TracksService {
   }
 
   async remove(id: string) {
+    const favs = await this.favoritesService.findAll();
+    if (favs.tracks.length > 0) {
+      favs.tracks.map((track) => {
+        if (track.id === id) this.favoritesService.removeTrackFromFavorites(id);
+        return;
+      });
+    }
     return TracksService.DB.remove(id);
   }
-
-  // async removeAlbum(id: string) {
-  //   return new Promise(async (resolve) => {
-  //     const tracks = await this.findAll();
-  //     tracks.map(async (track) => {
-  //       if (track.albumId === id) {
-  //         await this.update(id, { albumId: null });
-  //       }
-  //       return track;
-  //     });
-  //     resolve(null);
-  //   });
-  // }
 }
