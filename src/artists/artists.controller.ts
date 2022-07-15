@@ -55,8 +55,8 @@ export class ArtistsController {
   remove(@Param('id') id: string) {
     if (!isValidID(id)) throw new BadRequestException(ERRORS_MSGS.INVALID_ID);
     const artistIndex = this.artistsService.remove(id);
-    if (artistIndex === -1) {
+    if (artistIndex === -1)
       throw new NotFoundException(ERRORS_MSGS.ARTIST_NOT_FOUND);
-    } else return;
+    return;
   }
 }
