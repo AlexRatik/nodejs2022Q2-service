@@ -14,6 +14,6 @@ async function bootstrap() {
   const DOCS_DATA = await readFile(DOCS_FILE, 'utf-8');
   const document = parse(DOCS_DATA);
   SwaggerModule.setup('doc', app, document);
-  await app.listen(4000);
+  await app.listen(process.env.PORT || 4000);
 }
 bootstrap();
