@@ -1,23 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { AlbumsService } from 'src/albums/albums.service';
 import { v4 as uuidv4 } from 'uuid';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { Track } from './entities/track.entity';
+import { DATABASE } from '../database/database';
 
 @Injectable()
 export class TracksService {
-  private tracks: Track[] = [];
+  private static DB: DATABASE<Track>;
 
-  findAll() {
-    return this.tracks;
+  constructor(
+    @Inject(forwardRef(() => AlbumsService))
+    private albumsService: AlbumsService,
+  ) {
+    TracksService.DB = new DATABASE<Track>(Track);
   }
 
-  findOne(id: string) {
-    const track = this.tracks.find((track) => track.id === id);
-    return track;
+  async findAll() {
+    return TracksService.DB.findAll();
   }
 
-  create(createTrackDto: CreateTrackDto) {
+  async findOne(id: string) {
+    return TracksService.DB.findByID(id);
+  }
+
+  async create(createTrackDto: CreateTrackDto) {
     const track = new Track({
       id: uuidv4(),
       name: createTrackDto.name,
@@ -25,27 +33,35 @@ export class TracksService {
       artistId: createTrackDto.artistId || null,
       duration: createTrackDto.duration,
     });
-    this.tracks.push(track);
-    return track;
+    return TracksService.DB.create(track);
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const track = this.tracks.find((track) => track.id === id);
-    if (track) {
-      const keysForUpdate = Object.keys(updateTrackDto);
-      for (const key of Object.keys(track)) {
-        if (keysForUpdate.includes(key)) {
-          track[key] = updateTrackDto[key];
-        }
-        continue;
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    const track = await this.findOne(id);
+    if (!track) return undefined;
+    const keysForUpdate = Object.keys(updateTrackDto);
+    for (const key of Object.keys(track)) {
+      if (keysForUpdate.includes(key)) {
+        track[key] = updateTrackDto[key];
       }
     }
-    return track;
+    return TracksService.DB.update(id, track);
   }
 
-  remove(id: string) {
-    const tracksIndex = this.tracks.findIndex((track) => track.id === id);
-    if (tracksIndex !== -1) this.tracks.splice(tracksIndex, 1);
-    return tracksIndex;
+  async remove(id: string) {
+    return TracksService.DB.remove(id);
   }
+
+  // async removeAlbum(id: string) {
+  //   return new Promise(async (resolve) => {
+  //     const tracks = await this.findAll();
+  //     tracks.map(async (track) => {
+  //       if (track.albumId === id) {
+  //         await this.update(id, { albumId: null });
+  //       }
+  //       return track;
+  //     });
+  //     resolve(null);
+  //   });
+  // }
 }

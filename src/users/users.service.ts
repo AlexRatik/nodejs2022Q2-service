@@ -4,21 +4,25 @@ import { v4 as uuidv4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDTO } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
+import { DATABASE } from '../database/database';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  private static DATABASE: DATABASE<User>;
 
-  findAll() {
-    return this.users;
+  constructor() {
+    UsersService.DATABASE = new DATABASE<User>(User);
   }
 
-  findOne(id: string) {
-    const user = this.users.find((user) => user.id === id);
-    return user;
+  async findAll() {
+    return UsersService.DATABASE.findAll();
   }
 
-  create(createUserDto: CreateUserDto) {
+  async findOne(id: string) {
+    return UsersService.DATABASE.findByID(id);
+  }
+
+  async create(createUserDto: CreateUserDto) {
     const user = new User({
       id: uuidv4(),
       login: createUserDto.login,
@@ -27,25 +31,23 @@ export class UsersService {
       updatedAt: Date.now(),
       version: 1,
     });
-    this.users.push(user);
-    return user;
+    return UsersService.DATABASE.create(user);
   }
 
-  update(id: string, updatePasswordDTO: UpdatePasswordDTO) {
-    const user = this.users.find((user) => user.id === id);
+  async update(id: string, updatePasswordDTO: UpdatePasswordDTO) {
+    const user = await this.findOne(id);
+    if (!user) return undefined;
     if (user && user.password === updatePasswordDTO.oldPassword) {
       user.password = updatePasswordDTO.newPassword;
       user.updatedAt = Date.now();
       user.version++;
+      return UsersService.DATABASE.update(id, user);
     } else if (user && user.password !== updatePasswordDTO.oldPassword) {
       return ERRORS_MSGS.INVALID_PASSWORD;
     }
-    return user;
   }
 
-  remove(id: string) {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-    if (userIndex !== -1) this.users.splice(userIndex, 1);
-    return userIndex;
+  async remove(id: string) {
+    return UsersService.DATABASE.remove(id);
   }
 }
