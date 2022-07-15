@@ -24,11 +24,11 @@ export class AlbumsService {
   }
 
   async findAll(): Promise<Album[]> {
-    return AlbumsService.DATABASE.findAll();
+    return await AlbumsService.DATABASE.findAll();
   }
 
   async findOne(id: string): Promise<Album> {
-    return AlbumsService.DATABASE.findByID(id);
+    return await AlbumsService.DATABASE.findByID(id);
   }
 
   async create(createAlbumDto: CreateAlbumDto): Promise<Album> {
@@ -38,7 +38,7 @@ export class AlbumsService {
       year: createAlbumDto.year,
       artistId: createAlbumDto.artistId,
     });
-    return AlbumsService.DATABASE.create(album);
+    return await AlbumsService.DATABASE.create(album);
   }
 
   async update(id: string, updateAlbumDto: UpdateAlbumDto): Promise<Album> {
@@ -50,7 +50,7 @@ export class AlbumsService {
         album[key] = updateAlbumDto[key];
       }
     }
-    return AlbumsService.DATABASE.update(id, album);
+    return await AlbumsService.DATABASE.update(id, album);
   }
 
   async remove(id: string): Promise<number> {
@@ -61,7 +61,6 @@ export class AlbumsService {
         return;
       });
     }
-
     const albumIndex = await AlbumsService.DATABASE.remove(id);
     const tracks = await this.tracksService.findAll();
     for (const track of tracks) {

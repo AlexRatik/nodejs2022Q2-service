@@ -24,11 +24,11 @@ export class ArtistsService {
   }
 
   async findAll(): Promise<Artist[]> {
-    return ArtistsService.DATABASE.findAll();
+    return await ArtistsService.DATABASE.findAll();
   }
 
   async findOne(id: string): Promise<Artist | undefined> {
-    return ArtistsService.DATABASE.findByID(id);
+    return await ArtistsService.DATABASE.findByID(id);
   }
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
@@ -37,7 +37,7 @@ export class ArtistsService {
       name: createArtistDto.name,
       grammy: createArtistDto.grammy,
     });
-    return ArtistsService.DATABASE.create(artist);
+    return await ArtistsService.DATABASE.create(artist);
   }
 
   async update(
@@ -45,7 +45,6 @@ export class ArtistsService {
     updateArtistDto: UpdateArtistDto,
   ): Promise<Artist | undefined> {
     const artist = await this.findOne(id);
-    console.log(artist);
     if (!artist) return undefined;
     const keysForUpdate = Object.keys(updateArtistDto);
     for (const key of Object.keys(artist)) {
@@ -53,7 +52,7 @@ export class ArtistsService {
         artist[key] = updateArtistDto[key];
       }
     }
-    return ArtistsService.DATABASE.update(id, artist);
+    return await ArtistsService.DATABASE.update(id, artist);
   }
 
   async remove(id: string): Promise<number> {
@@ -65,7 +64,6 @@ export class ArtistsService {
         return;
       });
     }
-
     const artistIndex = await ArtistsService.DATABASE.remove(id);
     const tracks = await this.tracksService.findAll();
     for (const track of tracks) {

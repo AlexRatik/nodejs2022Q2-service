@@ -24,11 +24,11 @@ export class TracksService {
   }
 
   async findAll() {
-    return TracksService.DB.findAll();
+    return await TracksService.DB.findAll();
   }
 
   async findOne(id: string) {
-    return TracksService.DB.findByID(id);
+    return await TracksService.DB.findByID(id);
   }
 
   async create(createTrackDto: CreateTrackDto) {
@@ -39,7 +39,7 @@ export class TracksService {
       artistId: createTrackDto.artistId || null,
       duration: createTrackDto.duration,
     });
-    return TracksService.DB.create(track);
+    return await TracksService.DB.create(track);
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto) {
@@ -51,7 +51,7 @@ export class TracksService {
         track[key] = updateTrackDto[key];
       }
     }
-    return TracksService.DB.update(id, track);
+    return await TracksService.DB.update(id, track);
   }
 
   async remove(id: string) {
@@ -62,6 +62,6 @@ export class TracksService {
         return;
       });
     }
-    return TracksService.DB.remove(id);
+    return await TracksService.DB.remove(id);
   }
 }
